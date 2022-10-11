@@ -1,32 +1,44 @@
-Descargar la ISO de debian:
+# Requirements
+This is a Vagrant file to decompress and modify Debian ISO.
 
-https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-11.5.0-amd64-standard.iso
-
-Descargar cubic para ubuntu:
+Tested in:
 ```
-	sudo apt-add-repository ppa:cubic-wizard/release
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6494C6D6997C215E
-	sudo apt update && sudo apt install cubic
-```
-Seleccionar un directorio en cubic sobre el que se descoprimira la imagen.
-```
-~/iso1
-```
-Cuando el chroot, descargar el script y ejecutar la instalación.
-
-Crear el seed en la pestanya de pressed:
-```
-:~/iso1$ vi custom-disk/preseed/debian.seed 
+ii  vagrant                                    2.2.6+dfsg-2ubuntu3                           all          Tool for building and distributing virtualized development environments
+ii  virtualbox-6.1                             6.1.32-149290~Ubuntu~eoan                     amd64        Oracle VM VirtualBox
 ```
 
-Editar el menu.cfg para el cargar el seed anterior.
+And Ubuntu 22.04 LTS:
 ```
-~/iso1$ cat custom-disk/isolinux/menu.cfg
-INCLUDE stdmenu.cfg
-MENU title Main Menu
-DEFAULT Debian-Installer-Dani
-LABEL Debian-Installer-Dani
-  SAY "Booting Debian Installer..."
-  linux /d-i/vmlinuz 
-  APPEND boot=casper initrd=/d-i/initrd.gz preseed/file=/cdrom/preseed/debian.seed auto=true debian-installer/locale=es_ES keyboard-configuration/layoutcode=es
+/etc/issue
+Ubuntu 20.04.4 LTS \n \l
 ```
+
+# Files
+
+* chroot.sh: Modify the chroot script to add some packages inside of the image
+* debian.seed: The ISO generate by this vagrant include a debian seed for the installation. All the installation process is unattended and you can edit the configuration inside of this file.
+* menu.cfg: added kernel line to boot with debian.seed.
+* create-image.sh: the all the instructions to decompress modify and compress the image are inside of this script. You can modify the version of the ISO here.
+
+
+
+# How to create a new Debian Image
+
+Clone this repository:
+```
+git clone https://github.com/danielcastropalomares/debian-iso-custom-builder.git
+```
+And execute vagrant:
+```
+cd debian-iso-custom-builder
+Vagrant up
+```
+
+The ISO genetared by vagrant is saved in the same directory:
+
+```
+~/git/debian-iso-custom-builder$ ls -liath Debian-11.5-amd64-custom-111022-193851.iso
+8393700 -rw-r--r-- 1 danicastro danicastro 1,1G oct 11 21:48 Debian-11.5-amd64-custom-111022-193851.iso
+
+```
+
